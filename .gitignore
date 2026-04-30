@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter
+.ipynb_checkpoints/
+
+# WandB (logs de experimentos)
+wandb/
+
+# Modelos entrenados y preprocesador (muy pesados para GitHub)
+#*.pkl
+#*.keras
+#*.h5
+
+# Datos crudos y procesados (dataset original y .npz)
+data/
