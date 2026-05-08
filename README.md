@@ -1,28 +1,26 @@
-# Predicción de decisión de compra de vivienda
+# Predicción de Intención de Compra - Casa Inteligente
 
-**Objetivo**: predecir si un cliente comprará una casa basándose en sus características financieras, de la propiedad y del entorno.
+* **Framework:** TensorFlow / Keras
+* **Optimización:** Optuna (Búsqueda Bayesiana)
+* **Monitoreo:** Weights & Biases (WandB)
+* **Entorno:** Miniconda / Python 3.13
+  
+
+1.  **Exploración de Arquitecturas:** Se utilizó **Optuna** para iterar sobre decenas de combinaciones de capas, neuronas y tasas de aprendizaje (`learning_rate`), buscando minimizar la función de pérdida.
+2.  **Seguimiento de Experimentos:** Cada "trial" fue registrado en **WandB**, lo que permitió visualizar la convergencia de las curvas de *Loss* y *Accuracy* en tiempo real, garantizando que el modelo no sufriera de sobreajuste (**Overfitting**).
+3.  **Ajuste de Pesos:** Dado el desbalance de clases, se implementaron `class_weights` para darle mayor importancia a los compradores reales.
 
 
-Usamos el [Global House Purchase Decision Dataset](https://www.kaggle.com/datasets/mohankrishnathalla/global-house-purchase-decision-dataset) con 200 000 registros y 25 variables.  
+| Métrica | Modelo de Concurso (Base) | Modelo de Negocio (Optimizado) |
+| :--- | :--- | :--- |
+| **Accuracy** | **77.01%** | 65.37% |
+| **Umbral (Threshold)** | 0.6192 | 0.25 |
+| **Estrategia** | Maximizar el acierto global. | Maximizar la detección de compradores. |
+| **Veredicto** | Excelente para filtrar "No Compradores". | **Ideal para ventas**, capturando al 99% de los clientes potenciales. |
 
-La meta es construir un clasificador binario (compra / no compra) que obtenga la mayor exactitud posible, respetando una división 70 % entrenamiento, 20 % prueba y 10 % validación (esta última solo se evalúa una vez al final).
+> **Nota Técnica:** Presentar un Accuracy del 77% es matemáticamente superior, pero en un entorno de ventas, el modelo con un umbral de **0.25** es el que genera valor real al reducir drásticamente los Falsos Negativos (clientes perdidos).
 
-- **EDA e ingeniería de variables**  
-  Detecté que `satisfaction_score` era la característica más discriminante y que los ratios financieros (ej. `log(salario) – log(precio)`) capturaban la capacidad de compra.  
-  Transformé variables con logaritmos, creé *ratios* y codifiqué las categóricas, pasando de 25 a 83 columnas.
+El repositorio incluye los notebooks con las gráficas de entrenamiento donde se observa una convergencia limpia entre el set de entrenamiento y el de validación, validando la robustez del sistema.
 
-- **Modelado y optimización**  
-  Empecé con una regresión logística (94 % de acierto en prueba).  
-  Entrené una red neuronal con regularización (Dropout, BatchNorm, L2) y afiné hiperparámetros usando **Optuna** (25 combinaciones) monitoreando el conjunto de prueba.
-
-- **Ensamble y evaluación final**  
-  Promediando las probabilidades de la red neuronal y un Random Forest obtuve **0.999200 de exactitud sobre 20 000 casos nunca vistos** (solo 16 errores).  
-  La validación se respetó como conjunto ciego hasta el último paso, siguiendo la regla del concurso.
-
-## Registro de experimentos
-
-Todos los experimentos (métricas, hiperparámetros, curvas de aprendizaje) se guardaron en **Weights & Biases**:
-
-- [Proyecto Optuna](https://wandb.ai/dsaltyp0rtillo-buap/house-purchase-optuna)  
-- [Evaluación final](https://wandb.ai/dsaltyp0rtillo-buap/house-purchase-final)
-
+* [P0rtillosETY](https://github.com/P0rtillosETY)  
+*
